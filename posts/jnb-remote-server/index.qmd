@@ -3,7 +3,7 @@ title: "如何在超算上跑 jupyter notebook"
 author: "Shan Jin"
 date: "2021-11-24"
 categories: [tutorial,super-computer]
-image: "thumbnail.jpg"
+image: "jupyter.png"
 ---
 
 这里我总结一下在超算上运行jnb的方法。jnb可以在登录节点和远程节点运行，其中登录节点只适合做一些简单的运算，数据量大的运算应在远程节点进行。
