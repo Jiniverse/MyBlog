@@ -15,5 +15,7 @@ format:
     theme: solar
     css: styles.css
 
-
+comments:
+  giscus:
+    repo: Jiniverse/MyBlog
 
