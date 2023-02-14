@@ -3,6 +3,7 @@ title: "Welcome To My Blog"
 author: "Tristan O'Malley"
 date: "2023-02-11"
 categories: [news]
+comments: ture
 ---
 
 This is the first post in a Quarto blog. Welcome!
