@@ -6,7 +6,6 @@ categories: [VPS, code, tutorial]
 image: "network.jpg"
 ---
 
-# 搭建v2ray节点的步骤与心得
 
 最近参照网上的一些文章，主要是一灯大师写的这篇[教程](https://iyideng.net/black-technology/cgfw/vmess-v2ray-server-building-and-using-tutorial.html)，搭建了v2ray节点。这里我根据自己的实际经历，记录了搭建过程中的一些心得，并且补充说明了如何解决GS的403错误。
 

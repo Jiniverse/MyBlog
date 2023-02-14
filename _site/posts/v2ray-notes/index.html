@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.335">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Shan Jin">
+<meta name="dcterms.date" content="2023-02-14">
+
+<title>JinsBlog - 搭建v2ray节点的步骤与心得</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed fullcontent">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">JinsBlog</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html">
+ <span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/Jiniverse"><i class="bi bi-github" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com/JinMountain"><i class="bi bi-twitter" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">搭建v2ray节点的步骤与心得</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">VPS</div>
+                <div class="quarto-category">code</div>
+                <div class="quarto-category">tutorial</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Shan Jin </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">February 14, 2023</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+<p>最近参照网上的一些文章，主要是一灯大师写的这篇<a href="https://iyideng.net/black-technology/cgfw/vmess-v2ray-server-building-and-using-tutorial.html">教程</a>，搭建了v2ray节点。这里我根据自己的实际经历，记录了搭建过程中的一些心得，并且补充说明了如何解决GS的403错误。</p>
+<section id="购买vps" class="level2">
+<h2 class="anchored" data-anchor-id="购买vps">购买VPS</h2>
+<p>首先我们需要租用一台国外的服务器，即所谓的VPS (<em>Virtual Private Server</em>). 网上推荐最多的是<a href="https://www.vultr.com">vultr</a> 的服务器，我试了一下，确实不错。vultr主要的优点是可以随时更换新的服务器，比如要更换服务器IP时，只需要新建一个新的服务器，再把旧的删除即可。因为vultr的每一台VPS是单独按小时扣费的，所以更换新的VPS不会导致额外的费用。</p>
+<p>在<a href="https://www.vultr.com">vlutr官网</a> 注册新账号之后，它会先让你添加支付方式，可以选择VISA卡或者支付宝，我选择的是支付宝。在选择支付宝之后，它会让你先进行充值，这个充值金额是进入到vlutr账户的余额当中的，在创建服务器之后，它会根据服务器的使用时间实时扣钱。如果不放心，可以少充一点，用完了再充。这种扣费方式和超算有点像。</p>
+<p>充值完余额后，进入<strong>My Account</strong>, 点击左边向导栏的<strong>Products</strong>, 点击屏幕上的蓝色的➕号即可添加服务器。最低配置的服务器为5美元/月，实际扣费时是按小时扣费的，不会一次性扣5美元。在配置选项页面做如下选择：在<strong>Choose Server</strong> 选择 <strong>Cloud Computer</strong>, 在<strong>CPU &amp; Storage Technology</strong> 选择 <strong>intel Regular Performance</strong>.</p>
+<p>重点说一下 <strong>Server Location</strong>, 即VPS所在地。我分别在 Tokyo, US-seattle, US-LA创建过服务器，其中US-LA的服务器速度最快，延迟在165ms左右，0丢包，US-seattle延迟在200ms以上，偶尔丢包。最离谱的是Tokyo，以为在亚洲会快一点，结果速度很慢，还经常丢包。所以我推荐选择 Los Angeles 的服务器。当然也可能存在个体差异，可以试试其他的。</p>
+<p>在 <strong>Server Image</strong> 选择操作系统，我选的是 Ubuntu 22.04, 在 <strong>Server Size</strong> 处选5美元的，在<strong>Add Auto Backuups</strong> 将同步功能关闭，之后的选项保持默认，点<strong>Deploy Now</strong> 会创建服务器。几秒种之后系统安装完成，可以点进去查看VPS的具体配置，里面有服务器的ip地址和ssh密码。在本地ping VPS的ip地址会有回应，但此时还不能用ssh连接。在等待5-10分钟后，ssh通道建立成功，在你的本地用 <code>ssh root@&lt;ip address&gt;</code> 可连接到服务器。</p>
+</section>
+<section id="注册及解析域名" class="level2">
+<h2 class="anchored" data-anchor-id="注册及解析域名">注册及解析域名</h2>
+<p>注册域名的目的，是为了将v2ray伪装成网站，不易被封锁。在一灯的教程里提到了在<a href="https://www.freenom.com">Freenom</a> 注册免费域名的方法，但是我在实际申请时发现，该网站目前不提供免费域名，不确定将来是否能恢复。我在 <a href="https://www.namesilo.com">https://www.namesilo.com</a>, 购买了付费域名，一年1.88美元，价格是可以接受的。购买方法比较简单，在主页搜索你先要的域名，注册账号之后购买即可。购买完成后，进入 <strong>My Account</strong>, 在 <a href="https://www.namesilo.com/account_domains.php">Domain Manager</a> 管理域名。在 <strong>Options</strong> 一栏选择第5个蓝色图标进入DNS修改页面，添加 <strong>A</strong> 类 DNS, 其中IPV4地址填VPS的ip地址，其他保持默认，提交即可。在 <strong>Existing Resource Records</strong> 里删除其他的 <strong>A</strong> 类 DNS. 等待5-10分钟，解析完成，在本地ping 你创建的域名，它会显示ip地址是你的VPS的地址。</p>
+<div class="callout-tip callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+如何将域名托管到Cloudflare？（点击展开）
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>如果不嫌麻烦，可以把域名托管到cloudflare. 在<a href="http://cloudflare.com">Cloudflare</a> 创建账号并登录后，点击 <strong>Add a Site</strong> 添加已申请的域名，然后在 namesilo 域名管理页面选中你的域名，点击 <strong>Change Nameservers</strong>, 删除已有的servers, 添加cloudflare的servers, 完成托管。此时在cloudflare网站上进入托管的域名，选择左侧向导栏的 <strong>DNS</strong>, 可以看到网站的<strong>A</strong> 类DNS的 <strong>Proxy status</strong> 是打开的，图标是一个黄色云朵。此时ping你的域名是ping不通的。选择<strong>Edit</strong>, 将 <strong>Proxy status</strong> 关闭，然后保存，此时 <strong>Proxy status</strong> 呈一个灰色的云朵。在本地ping 你的域名，确认能ping通。</p>
+</div>
+</div>
+</div>
+</section>
+<section id="搭建v2ray服务器" class="level2">
+<h2 class="anchored" data-anchor-id="搭建v2ray服务器">搭建v2ray服务器</h2>
+<p>ssh连接到你购买的VPS，按照一灯的教程，先安装时间同步组件</p>
+<pre class="shell"><code>apt install ntp -y</code></pre>
+<p>然后执行v2ray的一键安装脚本</p>
+<pre class="shell"><code>source &lt;(curl -sL https://multi.netlify.app/v2ray.sh) --zh</code></pre>
+<p>安装完成后需要更改配置，一共分三步：</p>
+<ol type="1">
+<li><p>输入 <code>v2ray</code> 进入v2ray 管理页面，然后依次选择 <strong>3.更改配置</strong>-<strong>5.更改传输方式</strong>- <strong>3.WebSocket</strong>，然后输入你申请的域名，回车。</p></li>
+<li><p>依次选择 <strong>3.更改配置</strong>-<strong>6.更改TLS设置</strong>- <strong>1.开启 TLS</strong>-<strong>Let’s Encrypt 生成证书(准备域名)</strong>，输入域名，回车。</p></li>
+<li><p>依次选择 <strong>3.更改配置</strong>-<strong>11.走CDN(需要域名)</strong>，回车，接着依次选择<strong>1.443</strong>-<strong>1.Vmess协议</strong>-<strong>Let’s Encrypt 生成证书(准备域名)</strong>， 回车。</p></li>
+</ol>
+<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>v2ray的脚本有很多，这里选了其中一个。如果之前安装过其他的，后来又卸载了重新安装这个脚本，会导致v2ray管理页面进入不了，此时可以在命令行输入xray来安装xray命令，此后用xray命令来进步v2ray管理页面。</p>
+</div>
+</div>
+</section>
+<section id="客户端配置" class="level2">
+<h2 class="anchored" data-anchor-id="客户端配置">客户端配置</h2>
+<p>mac 端推荐使用<a href="https://github.com/yichengchen/clashX">clashX</a>, 在下载安装后状态栏会有一个小猫咪的图标，配置方式有两种：</p>
+<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>猫咪图标的第一个选项Proxy Mode中的rule是分流代理的意思，即只有规定的网址才走代理。这个规则是在配置文件中书写和更改的。global 是全局代理。</p>
+</div>
+</div>
+<ol type="1">
+<li><p>添加远程url</p>
+<p>首先要将vmess节点链接转换为url链接。ssh连接远程服务器，输入<code>v2ray</code> 进入管理页面，选择 <strong>4.查看配置</strong>。在返回信息中有<code>vmess</code> 开头的一长条链接，将整段链接复制，打开<a href="https://acl4ssr-sub.github.io">网页</a>, 将刚才复制vmess链接粘贴到“订阅链接”中，“远程配置“选择第2个，然后点击<strong>生成订阅链接</strong>，在“定制订阅”中复制url。在自己电脑上点击猫咪图标，选择 Config –Remote config – Manage. 点击 <strong>Add</strong>, 将复制的url粘贴 <strong>Url</strong> 一栏，在 <strong>Config Name</strong> 一栏任意取个名字，点击 <strong>OK</strong>. 再点击猫咪图标，在Config选项中选择刚刚你去的名字，点击 <strong>Set as system proxy</strong> 即开启代理。</p>
+<div class="callout-warning callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Warning
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>为了确保安全性，在确认上网正常后，应立即删除url (Config – Remote config – Manage – Delete). 在VPS上输入<code>v2ray</code>, 选择 <strong>3.更改配置</strong>-<strong>2.更改UUID</strong>, 获得新的uuid, 然后点击猫咪头像，选择 Config – Open config folder, 打开相应的配置文件，将uuid改成重新修改过的uuid.</p>
+</div>
+</div></li>
+<li><p>自己写配置文件</p>
+<p>ssh连接远程服务器，输入<code>v2ray</code> 进入管理页面，选择 <strong>4.查看配置</strong>，可以获得v2ray服务器的配置信息。点击猫咪头像，选择 Config – Open config folder, 里面有配置文件的模版，可以仿照着写，但是比较简陋，规则不够详细。网上生产的远程配置文件，大体能用，但规则也不尽详全，且界面不美观。我写了一份规则详尽且美观的配置文件，有需要可以找我来要。</p></li>
+</ol>
+<p>ios 端推荐使用 Shadowrocket（一次性购买），配置方法也分两种：</p>
+<ol type="1">
+<li><p>点击右上角的➕，在 Type 中选择 Subscribe, 在URL一栏填写远端url, url获取方式上面已写。这种方法的缺点是存在安全隐患。</p></li>
+<li><p>将你写好的 config 文件保存在 iCloud 上，点击 Shadowrocket 下方的 Config, 选择 Import From Cloud, 点 Browse, 选择config文件。回到主页，选择节点，打开开关即可连接。手机上的代理也是分流，即不会影响国内网站的访问速度，平时一直开着也没事，使用时还是很方便的。</p></li>
+</ol>
+</section>
+<section id="google-scholar-error-403-解决办法" class="level2">
+<h2 class="anchored" data-anchor-id="google-scholar-error-403-解决办法">Google Scholar Error 403 解决办法</h2>
+<p>按上述方法搭建v2ray，虽然可以科学上网，但是唯独无法访问Google Scholar. 会遇到错误</p>
+<blockquote class="blockquote">
+<p>Your client does not have permission to get URL/from this server</p>
+</blockquote>
+<p>这是因为Scholar 风控比较严格, 一般 VPS 的 IP 都会被 Scholar 屏蔽。解决方法是在VPS上安装 Cloudflare warp, 二次代理到 Cloudflare 的网络来访问 Scholar.</p>
+<p>在 <a href="https://1.1.1.1">cf warp 官网</a> 下载 cf warp 的 Linux 安装包 (.deb文件). 用scp 传送到VPS上进行安装，然后开启socks代理：</p>
+<pre class="shell"><code>warp-cli register
+warp-cli set-mode proxy
+warp-cli set-proxy-port 1249
+warp-cli connect</code></pre>
+<p>最后这个端口号可以自行选择。然后打开v2ray配置文件</p>
+<pre class="shell"><code>vim /etc/v2ray/config.json</code></pre>
+<p>修改相应模块如下：（注意socks的端口是上面设置的端口）</p>
+<pre class="vim"><code> "outbounds": [
+    {
+      "protocol": "freedom",
+      "settings": {}
+    },
+    {
+      "protocol": "blackhole",
+      "settings": {},
+      "tag": "block"
+    },
+    {
+      "protocol": "socks",
+      "settings": {
+        "version": "5",
+        "servers": [
+          {
+            "address": "127.0.0.1",
+            "port": 1249
+          }
+        ]
+      },
+       "tag": "scholar"
+    }
+  ],
+
+"routing": {
+    "domainStrategy": "AsIs",
+    "rules": [
+      {
+        "type": "field",
+        "ip": [
+          "0.0.0.0/8",
+          "10.0.0.0/8",
+          "100.64.0.0/10",
+          "169.254.0.0/16",
+          "172.16.0.0/12",
+          "192.0.0.0/24",
+          "192.0.2.0/24",
+          "192.168.0.0/16",
+          "198.18.0.0/15",
+          "198.51.100.0/24",
+          "203.0.113.0/24",
+          "::1/128",
+          "fc00::/7",
+          "fe80::/10"
+        ],
+        "outboundTag": "block"
+      },
+      {
+        "type": "field",
+        "domains": [
+          "scholar.google",
+          "scholar.googleusercontent",
+          "www.cloudflare.com"
+        ],
+        "outboundTag": "scholar"
+      }
+    ]
+  }</code></pre>
+<p>重启 v2ray 后即可正常访问 Google Scholar.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<script src="https://giscus.app/client.js" data-repo="Jiniverse/MyBlog" data-repo-id="R_kgDOI9jpUA" data-category="General" data-category-id="DIC_kwDOI9jpUM4CUMin" data-mapping="title" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="light" data-lang="en" crossorigin="anonymous" async="">
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
