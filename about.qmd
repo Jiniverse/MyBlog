@@ -12,6 +12,6 @@ about:
       href: https://github.com/Jiniverse
 
 ---
-Welcome to my personal blog! Here, I'll be sharing my tips and tricks for programming and Computer Science. 
+Welcome to my personal blog! Here, I aim to provide useful tips and tricks for programming and Computer Science, as well as share some of my own experiences and stories along the way. Whether you're looking for useful skills or just come across this place, I hope you'll find something of interest here.  
 
 
