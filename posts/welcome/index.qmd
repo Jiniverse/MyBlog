@@ -6,7 +6,7 @@ categories: [news]
 comments: ture
 ---
 
-This is the first post in a Quarto blog. Welcome!
+This is the first post in a Quarto blog. 
 
 ![](thumbnail.jpg)
 
