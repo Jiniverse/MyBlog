@@ -12,7 +12,7 @@ website:
         href: https://twitter.com/JinMountain
 format:
   html:
-    theme: solar
+    theme: minty
     css: styles.css
 
 comments:
