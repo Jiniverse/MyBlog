@@ -1,59 +1,10 @@
 [
   {
-    "objectID": "posts/post-with-code/index.html",
-    "href": "posts/post-with-code/index.html",
-    "title": "搭建v2ray节点的步骤与心得",
-    "section": "",
-    "text": "最近参照网上的一些文章，主要是一灯大师写的这篇教程，搭建了v2ray节点。这里我根据自己的实际经历，记录了搭建过程中的一些心得，并且补充说明了如何解决GS的403错误。\n\n\n首先我们需要租用一台国外的服务器，即所谓的VPS (Virtual Private Server). 网上推荐最多的是vultr 的服务器，我试了一下，确实不错。vultr主要的优点是可以随时更换新的服务器，比如要更换服务器IP时，只需要新建一个新的服务器，再把旧的删除即可。因为vultr的每一台VPS是单独按小时扣费的，所以更换新的VPS不会导致额外的费用。\n在vlutr官网 注册新账号之后，它会先让你添加支付方式，可以选择VISA卡或者支付宝，我选择的是支付宝。在选择支付宝之后，它会让你先进行充值，这个充值金额是进入到vlutr账户的余额当中的，在创建服务器之后，它会根据服务器的使用时间实时扣钱。如果不放心，可以少充一点，用完了再充。这种扣费方式和超算有点像。\n充值完余额后，进入My Account, 点击左边向导栏的Products, 点击屏幕上的蓝色的➕号即可添加服务器。最低配置的服务器为5美元/月，实际扣费时是按小时扣费的，不会一次性扣5美元。在配置选项页面做如下选择：在Choose Server 选择 Cloud Computer, 在CPU & Storage Technology 选择 intel Regular Performance.\n重点说一下 Server Location, 即VPS所在地。我分别在 Tokyo, US-seattle, US-LA创建过服务器，其中US-LA的服务器速度最快，延迟在165ms左右，0丢包，US-seattle延迟在200ms以上，偶尔丢包。最离谱的是Tokyo，以为在亚洲会快一点，结果速度很慢，还经常丢包。所以我推荐选择 Los Angeles 的服务器。当然也可能存在个体差异，可以试试其他的。\n在 Server Image 选择操作系统，我选的是 Ubuntu 22.04, 在 Server Size 处选5美元的，在Add Auto Backuups 将同步功能关闭，之后的选项保持默认，点Deploy Now 会创建服务器。几秒种之后系统安装完成，可以点进去查看VPS的具体配置，里面有服务器的ip地址和ssh密码。在本地ping VPS的ip地址会有回应，但此时还不能用ssh连接。在等待5-10分钟后，ssh通道建立成功，在你的本地用 ssh root@<ip address> 可连接到服务器。\n\n\n\n注册域名的目的，是为了将v2ray伪装成网站，不易被封锁。在一灯的教程里提到了在Freenom 注册免费域名的方法，但是我在实际申请时发现，该网站目前不提供免费域名，不确定将来是否能恢复。我在 https://www.namesilo.com, 购买了付费域名，一年1.88美元，价格是可以接受的。购买方法比较简单，在主页搜索你先要的域名，注册账号之后购买即可。购买完成后，进入 My Account, 在 Domain Manager 管理域名。在 Options 一栏选择第5个蓝色图标进入DNS修改页面，添加 A 类 DNS, 其中IPV4地址填VPS的ip地址，其他保持默认，提交即可。在 Existing Resource Records 里删除其他的 A 类 DNS. 等待5-10分钟，解析完成，在本地ping 你创建的域名，它会显示ip地址是你的VPS的地址。\n\n\n\n\n\n\n如何将域名托管到Cloudflare？（点击展开）\n\n\n\n\n\n如果不嫌麻烦，可以把域名托管到cloudflare. 在Cloudflare 创建账号并登录后，点击 Add a Site 添加已申请的域名，然后在 namesilo 域名管理页面选中你的域名，点击 Change Nameservers, 删除已有的servers, 添加cloudflare的servers, 完成托管。此时在cloudflare网站上进入托管的域名，选择左侧向导栏的 DNS, 可以看到网站的A 类DNS的 Proxy status 是打开的，图标是一个黄色云朵。此时ping你的域名是ping不通的。选择Edit, 将 Proxy status 关闭，然后保存，此时 Proxy status 呈一个灰色的云朵。在本地ping 你的域名，确认能ping通。\n\n\n\n\n\n\nssh连接到你购买的VPS，按照一灯的教程，先安装时间同步组件\napt install ntp -y\n然后执行v2ray的一键安装脚本\nsource <(curl -sL https://multi.netlify.app/v2ray.sh) --zh\n安装完成后需要更改配置，一共分三步：\n\n输入 v2ray 进入v2ray 管理页面，然后依次选择 3.更改配置-5.更改传输方式- 3.WebSocket，然后输入你申请的域名，回车。\n依次选择 3.更改配置-6.更改TLS设置- 1.开启 TLS-Let’s Encrypt 生成证书(准备域名)，输入域名，回车。\n依次选择 3.更改配置-11.走CDN(需要域名)，回车，接着依次选择1.443-1.Vmess协议-Let’s Encrypt 生成证书(准备域名)， 回车。\n\n\n\n\n\n\n\nNote\n\n\n\nv2ray的脚本有很多，这里选了其中一个。如果之前安装过其他的，后来又卸载了重新安装这个脚本，会导致v2ray管理页面进入不了，此时可以在命令行输入xray来安装xray命令，此后用xray命令来进步v2ray管理页面。\n\n\n\n\n\nmac 端推荐使用clashX, 在下载安装后状态栏会有一个小猫咪的图标，配置方式有两种：\n\n\n\n\n\n\nNote\n\n\n\n猫咪图标的第一个选项Proxy Mode中的rule是分流代理的意思，即只有规定的网址才走代理。这个规则是在配置文件中书写和更改的。global 是全局代理。\n\n\n\n添加远程url\n首先要将vmess节点链接转换为url链接。ssh连接远程服务器，输入v2ray 进入管理页面，选择 4.查看配置。在返回信息中有vmess 开头的一长条链接，将整段链接复制，打开网页, 将刚才复制vmess链接粘贴到“订阅链接”中，“远程配置“选择第2个，然后点击生成订阅链接，在“定制订阅”中复制url。在自己电脑上点击猫咪图标，选择 Config –Remote config – Manage. 点击 Add, 将复制的url粘贴 Url 一栏，在 Config Name 一栏任意取个名字，点击 OK. 再点击猫咪图标，在Config选项中选择刚刚你去的名字，点击 Set as system proxy 即开启代理。\n\n\n\n\n\n\nWarning\n\n\n\n为了确保安全性，在确认上网正常后，应立即删除url (Config – Remote config – Manage – Delete). 在VPS上输入v2ray, 选择 3.更改配置-2.更改UUID, 获得新的uuid, 然后点击猫咪头像，选择 Config – Open config folder, 打开相应的配置文件，将uuid改成重新修改过的uuid.\n\n\n自己写配置文件\nssh连接远程服务器，输入v2ray 进入管理页面，选择 4.查看配置，可以获得v2ray服务器的配置信息。点击猫咪头像，选择 Config – Open config folder, 里面有配置文件的模版，可以仿照着写，但是比较简陋，规则不够详细。网上生产的远程配置文件，大体能用，但规则也不尽详全，且界面不美观。我写了一份规则详尽且美观的配置文件，有需要可以找我来要。\n\nios 端推荐使用 Shadowrocket（一次性购买），配置方法也分两种：\n\n点击右上角的➕，在 Type 中选择 Subscribe, 在URL一栏填写远端url, url获取方式上面已写。这种方法的缺点是存在安全隐患。\n将你写好的 config 文件保存在 iCloud 上，点击 Shadowrocket 下方的 Config, 选择 Import From Cloud, 点 Browse, 选择config文件。回到主页，选择节点，打开开关即可连接。手机上的代理也是分流，即不会影响国内网站的访问速度，平时一直开着也没事，使用时还是很方便的。\n\n\n\n\n按上述方法搭建v2ray，虽然可以科学上网，但是唯独无法访问Google Scholar. 会遇到错误\n\nYour client does not have permission to get URL/from this server\n\n这是因为Scholar 风控比较严格, 一般 VPS 的 IP 都会被 Scholar 屏蔽。解决方法是在VPS上安装 Cloudflare warp, 二次代理到 Cloudflare 的网络来访问 Scholar.\n在 cf warp 官网 下载 cf warp 的 Linux 安装包 (.deb文件). 用scp 传送到VPS上进行安装，然后开启socks代理：\nwarp-cli register\nwarp-cli set-mode proxy\nwarp-cli set-proxy-port 1249\nwarp-cli connect\n最后这个端口号可以自行选择。然后打开v2ray配置文件\nvim /etc/v2ray/config.json\n修改相应模块如下：（注意socks的端口是上面设置的端口）\n \"outbounds\": [\n    {\n      \"protocol\": \"freedom\",\n      \"settings\": {}\n    },\n    {\n      \"protocol\": \"blackhole\",\n      \"settings\": {},\n      \"tag\": \"block\"\n    },\n    {\n      \"protocol\": \"socks\",\n      \"settings\": {\n        \"version\": \"5\",\n        \"servers\": [\n          {\n            \"address\": \"127.0.0.1\",\n            \"port\": 1249\n          }\n        ]\n      },\n       \"tag\": \"scholar\"\n    }\n  ],\n\n\"routing\": {\n    \"domainStrategy\": \"AsIs\",\n    \"rules\": [\n      {\n        \"type\": \"field\",\n        \"ip\": [\n          \"0.0.0.0/8\",\n          \"10.0.0.0/8\",\n          \"100.64.0.0/10\",\n          \"169.254.0.0/16\",\n          \"172.16.0.0/12\",\n          \"192.0.0.0/24\",\n          \"192.0.2.0/24\",\n          \"192.168.0.0/16\",\n          \"198.18.0.0/15\",\n          \"198.51.100.0/24\",\n          \"203.0.113.0/24\",\n          \"::1/128\",\n          \"fc00::/7\",\n          \"fe80::/10\"\n        ],\n        \"outboundTag\": \"block\"\n      },\n      {\n        \"type\": \"field\",\n        \"domains\": [\n          \"scholar.google\",\n          \"scholar.googleusercontent\",\n          \"www.cloudflare.com\"\n        ],\n        \"outboundTag\": \"scholar\"\n      }\n    ]\n  }\n重启 v2ray 后即可正常访问 Google Scholar."
-  },
-  {
-    "objectID": "posts/welcome/index.html",
-    "href": "posts/welcome/index.html",
-    "title": "Welcome To My Blog",
-    "section": "",
-    "text": "Hi, there! This is the first post in a Quarto blog. Here, I’ll be sharing my tips and tricks for programming and Computer Science."
-  },
-  {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "JinsBlog",
-    "section": "",
-    "text": "搭建v2ray节点的步骤与心得\n\n\n\n\n\n\n\nVPS\n\n\ncode\n\n\ntutorial\n\n\n\n\n\n\n\n\n\n\n\nFeb 14, 2023\n\n\nShan Jin\n\n\n\n\n\n\n  \n\n\n\n\nWelcome To My Blog\n\n\n\n\n\n\n\nnews\n\n\n\n\n\n\n\n\n\n\n\nFeb 14, 2023\n\n\nShan Jin\n\n\n\n\n\n\n  \n\n\n\n\n如何在超算上跑 jupyter notebook\n\n\n\n\n\n\n\ntutorial\n\n\nsuper-computer\n\n\n\n\n\n\n\n\n\n\n\nNov 24, 2021\n\n\nShan Jin\n\n\n\n\n\n\n  \n\n\n\n\n氢气球历险记\n\n\n\n\n\n\n\nstories\n\n\n\n\n\n\n\n\n\n\n\nAug 22, 2017\n\n\nShan Jin\n\n\n\n\n\n\nNo matching items"
-  },
-  {
-    "objectID": "about.html",
-    "href": "about.html",
-    "title": "About",
-    "section": "",
-    "text": "Welcome to my personal blog! Here, I aim to provide useful tips and tricks for programming and Computer Science, as well as share some of my own experiences and stories along the way. Whether you’re looking for useful skills or just come across this place, I hope you’ll find something of interest here."
-  },
-  {
     "objectID": "posts/v2ray-notes/index.html",
     "href": "posts/v2ray-notes/index.html",
     "title": "搭建v2ray节点的步骤与心得",
     "section": "",
     "text": "最近参照网上的一些文章，主要是一灯大师写的这篇教程，搭建了v2ray节点。这里我根据自己的实际经历，记录了搭建过程中的一些心得，并且补充说明了如何解决GS的403错误。"
-  },
-  {
-    "objectID": "posts/jnb-remote-server/index.html",
-    "href": "posts/jnb-remote-server/index.html",
-    "title": "如何在超算上跑 jupyter notebook",
-    "section": "",
-    "text": "这里我总结一下在超算上运行jnb的方法。jnb可以在登录节点和远程节点运行，其中登录节点只适合做一些简单的运算，数据量大的运算应在远程节点进行。"
-  },
-  {
-    "objectID": "posts/jnb-remote-server/index.html#在登录节点跑-jupyter-notebook",
-    "href": "posts/jnb-remote-server/index.html#在登录节点跑-jupyter-notebook",
-    "title": "如何在超算上跑 jupyter notebook",
-    "section": "在登录节点跑 jupyter notebook",
-    "text": "在登录节点跑 jupyter notebook\n先在本地配置好ssh登录信息，例如\nHost example\n    Hostname ssh.example.com\n    User someone\n    Port 22\n然后用ssh连接远程服务器后者超算，并做本地的端口映射，例如\nssh example -L 8000:127.0.0.1:8890\n其中 8000 对应的是本地端口，8890 是远程端口，在登录节点上运行\njupyter-notebook --no-browser --port=8890\n注意端口要与ssh连接的端口保持一致。最后在本地浏览器里访问 127.0.0.1:8000 即可打开登录节点运行的 jupyter notebook.\n\n\n\n\n\n\nWarning\n\n\n\n在登录节点跑 jupyter 一定程度上能节省计算资源，但仅适用于内存占用较少的程序，数据量比较大的时候应该用远程节点跑。"
-  },
-  {
-    "objectID": "posts/jnb-remote-server/index.html#用远程节点跑-jupyter-notebook",
-    "href": "posts/jnb-remote-server/index.html#用远程节点跑-jupyter-notebook",
-    "title": "如何在超算上跑 jupyter notebook",
-    "section": "用远程节点跑 jupyter notebook",
-    "text": "用远程节点跑 jupyter notebook\n在远程服务器创建如下脚本（假设命名为 jupyter.job ）\n#!/bin/bash\n#SBATCH --nodes 1\n#SBATCH -n 24 # number of processors in a node\n#SBATCH -p amd_512  # partition name\n#SBATCH --time 12:00:00\n#SBATCH --job-name jupyter-notebook\n#SBATCH -o /public1/home/scg1335/jins/jupyter-output.log\n#SBATCH -e /public1/home/scg1335/jins/jupyter-error.log\n\n# get tunneling info\nXDG_RUNTIME_DIR=\"\"\nport=$(shuf -i8000-9999 -n1)\nnode=$(hostname -s)\nuser=$(whoami)\ncluster=$(hostname -f | awk -F\".\" '{print $2}')\n\n# print tunneling instructions jupyter-log\necho -e \"\n   MacOS or linux terminal command to create your ssh tunnel\n   ssh paras -N -L 8890:${node}:${port}\n\n   Use a Browser on your local machine to go to:\n   localhost:${port}  (prefix w/ https:// if using password)\n   \"\n\n# load modules or conda environments here\n# uncomment the following two lines to use your conda environment called notebook_env\n# module load miniconda\n# source activate notebook_env\n\n# DON'T USE ADDRESS BELOW.\n# DO USE TOKEN BELOW\ncd /public1/home/scg1335/jins # where you run this job\njupyter lab --no-browser --port=${port} --ip=${node}\n# jupyter-notebook --no-browser --port=${port} --ip=${node}\n将其中的 /path/to/logfile/ 替换为你想要的路径，将 example 改为你定义的 Host. 用 sbatch jupyter.job 提交任务，而后在输出文件 jupyter-output.log 中复制ssh的连接信息ssh paras -N -L 8890:${node}:${port}，在本地终端中运行，进行端口映射。最后在本地浏览器中访问 127.0.0.1:8890，即可连接到超算上的jnb."
   },
   {
     "objectID": "posts/v2ray-notes/index.html#购买vps",
@@ -89,6 +40,20 @@
     "title": "搭建v2ray节点的步骤与心得",
     "section": "Google Scholar Error 403 解决办法",
     "text": "Google Scholar Error 403 解决办法\n按上述方法搭建v2ray，虽然可以科学上网，但是唯独无法访问Google Scholar. 会遇到错误\n\nYour client does not have permission to get URL/from this server\n\n这是因为Scholar 风控比较严格, 一般 VPS 的 IP 都会被 Scholar 屏蔽。解决方法是在VPS上安装 Cloudflare warp, 二次代理到 Cloudflare 的网络来访问 Scholar.\n在 cf warp 官网 下载 cf warp 的 Linux 安装包 (.deb文件). 用scp 传送到VPS上进行安装，然后开启socks代理：\nwarp-cli register\nwarp-cli set-mode proxy\nwarp-cli set-proxy-port 1249\nwarp-cli connect\n最后这个端口号可以自行选择。然后打开v2ray配置文件\nvim /etc/v2ray/config.json\n修改相应模块如下：（注意socks的端口是上面设置的端口）\n \"outbounds\": [\n    {\n      \"protocol\": \"freedom\",\n      \"settings\": {}\n    },\n    {\n      \"protocol\": \"blackhole\",\n      \"settings\": {},\n      \"tag\": \"block\"\n    },\n    {\n      \"protocol\": \"socks\",\n      \"settings\": {\n        \"version\": \"5\",\n        \"servers\": [\n          {\n            \"address\": \"127.0.0.1\",\n            \"port\": 1249\n          }\n        ]\n      },\n       \"tag\": \"scholar\"\n    }\n  ],\n\n\"routing\": {\n    \"domainStrategy\": \"AsIs\",\n    \"rules\": [\n      {\n        \"type\": \"field\",\n        \"ip\": [\n          \"0.0.0.0/8\",\n          \"10.0.0.0/8\",\n          \"100.64.0.0/10\",\n          \"169.254.0.0/16\",\n          \"172.16.0.0/12\",\n          \"192.0.0.0/24\",\n          \"192.0.2.0/24\",\n          \"192.168.0.0/16\",\n          \"198.18.0.0/15\",\n          \"198.51.100.0/24\",\n          \"203.0.113.0/24\",\n          \"::1/128\",\n          \"fc00::/7\",\n          \"fe80::/10\"\n        ],\n        \"outboundTag\": \"block\"\n      },\n      {\n        \"type\": \"field\",\n        \"domains\": [\n          \"scholar.google\",\n          \"scholar.googleusercontent\",\n          \"www.cloudflare.com\"\n        ],\n        \"outboundTag\": \"scholar\"\n      }\n    ]\n  }\n重启 v2ray 后即可正常访问 Google Scholar."
+  },
+  {
+    "objectID": "posts/welcome/index.html",
+    "href": "posts/welcome/index.html",
+    "title": "Welcome To My Blog",
+    "section": "",
+    "text": "Hi, there! This is the first post in a Quarto blog. Here, I’ll be sharing my tips and tricks for programming and Computer Science."
+  },
+  {
+    "objectID": "posts/mayavi-installation-macos/mayavi-installation.html",
+    "href": "posts/mayavi-installation-macos/mayavi-installation.html",
+    "title": "Install mayavi on macOS",
+    "section": "",
+    "text": "macOS Ventura, Version 13.1\nApple M1 chip\nAnaconda version 2021.05 with python3.8.8\n\n\n\npip install mayavi\npip install PyQt5\nAn error message emerges that demands for PyQt5<5.13 in order to be compatible with Spyder. Therefore, just run\npip uninstall PyQt5\npip install PyQt5==5.12\nand it’s done! To test the installation, run\nmayavi2\nThis will open a UI of mayavi application. To use mayavi in jupyter lab/notebook, do the following:\njupyter nbextension install --py mayavi --user\njupyter nbextension enable --py mayavi --user\n\nBelow is a test demo.\n\nfrom mayavi import mlab\nmlab.init_notebook('png')\ns = mlab.test_plot3d()\ns\n\nNotebook initialized with png backend.\n\n\n\n\n\n\n\n\nIt is important to install the right version of PyQt5 that is compatible with Spyder. Otherwise mayavi won’t run properly and if you from mayavi import mlab in the notebook, you will encounter the error message:\n\nWe can’t use gcf, as it creates a circular import in camera management"
   },
   {
     "objectID": "posts/balloon-adventure/index.html",
@@ -131,5 +96,40 @@
     "title": "氢气球历险记",
     "section": "尾声",
     "text": "尾声\n格瓦斯是当地的一种饮料，由俄国引入，它是用制造大列巴的发酵水制成的，通体成黄色。哈尔滨人常常会在松花江畔开狂欢节。一次狂欢节上，有一个小男孩喝得撑撑的，摇摇摆摆地在江边转悠，倏然间看到江里飘着八根雪白的羽毛。小男孩眼睛一亮，兴冲冲地想去打捞，谁知一个踉跄摔在了沙滩上，手里提着的格瓦斯翻倒在了松花江里，把其中的一根白色的羽毛给染黄了。小男孩揉了揉眼睛，惊奇地望着那八根羽毛逆着河水往上流游。\n当然喽，这件事天鹅夫妇可不知道，他们这时候正悠闲地在海边渡假呢！"
+  },
+  {
+    "objectID": "posts/jnb-remote-server/index.html",
+    "href": "posts/jnb-remote-server/index.html",
+    "title": "如何在超算上跑 jupyter notebook",
+    "section": "",
+    "text": "这里我总结一下在超算上运行jnb的方法。jnb可以在登录节点和远程节点运行，其中登录节点只适合做一些简单的运算，数据量大的运算应在远程节点进行。"
+  },
+  {
+    "objectID": "posts/jnb-remote-server/index.html#在登录节点跑-jupyter-notebook",
+    "href": "posts/jnb-remote-server/index.html#在登录节点跑-jupyter-notebook",
+    "title": "如何在超算上跑 jupyter notebook",
+    "section": "在登录节点跑 jupyter notebook",
+    "text": "在登录节点跑 jupyter notebook\n先在本地配置好ssh登录信息，例如\nHost example\n    Hostname ssh.example.com\n    User someone\n    Port 22\n然后用ssh连接远程服务器后者超算，并做本地的端口映射，例如\nssh example -L 8000:127.0.0.1:8890\n其中 8000 对应的是本地端口，8890 是远程端口，在登录节点上运行\njupyter-notebook --no-browser --port=8890\n注意端口要与ssh连接的端口保持一致。最后在本地浏览器里访问 127.0.0.1:8000 即可打开登录节点运行的 jupyter notebook.\n\n\n\n\n\n\nWarning\n\n\n\n在登录节点跑 jupyter 一定程度上能节省计算资源，但仅适用于内存占用较少的程序，数据量比较大的时候应该用远程节点跑。"
+  },
+  {
+    "objectID": "posts/jnb-remote-server/index.html#用远程节点跑-jupyter-notebook",
+    "href": "posts/jnb-remote-server/index.html#用远程节点跑-jupyter-notebook",
+    "title": "如何在超算上跑 jupyter notebook",
+    "section": "用远程节点跑 jupyter notebook",
+    "text": "用远程节点跑 jupyter notebook\n在远程服务器创建如下脚本（假设命名为 jupyter.job ）\n#!/bin/bash\n#SBATCH --nodes 1\n#SBATCH -n 24 # number of processors in a node\n#SBATCH -p amd_512  # partition name\n#SBATCH --time 12:00:00\n#SBATCH --job-name jupyter-notebook\n#SBATCH -o /public1/home/scg1335/jins/jupyter-output.log\n#SBATCH -e /public1/home/scg1335/jins/jupyter-error.log\n\n# get tunneling info\nXDG_RUNTIME_DIR=\"\"\nport=$(shuf -i8000-9999 -n1)\nnode=$(hostname -s)\nuser=$(whoami)\ncluster=$(hostname -f | awk -F\".\" '{print $2}')\n\n# print tunneling instructions jupyter-log\necho -e \"\n   MacOS or linux terminal command to create your ssh tunnel\n   ssh paras -N -L 8890:${node}:${port}\n\n   Use a Browser on your local machine to go to:\n   localhost:${port}  (prefix w/ https:// if using password)\n   \"\n\n# load modules or conda environments here\n# uncomment the following two lines to use your conda environment called notebook_env\n# module load miniconda\n# source activate notebook_env\n\n# DON'T USE ADDRESS BELOW.\n# DO USE TOKEN BELOW\ncd /public1/home/scg1335/jins # where you run this job\njupyter lab --no-browser --port=${port} --ip=${node}\n# jupyter-notebook --no-browser --port=${port} --ip=${node}\n将其中的 /path/to/logfile/ 替换为你想要的路径，将 example 改为你定义的 Host. 用 sbatch jupyter.job 提交任务，而后在输出文件 jupyter-output.log 中复制ssh的连接信息ssh paras -N -L 8890:${node}:${port}，在本地终端中运行，进行端口映射。最后在本地浏览器中访问 127.0.0.1:8890，即可连接到超算上的jnb."
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "JinsBlog",
+    "section": "",
+    "text": "Install mayavi on macOS\n\n\n\n\n\n\n\njupyter\n\n\nmayavi\n\n\nmacOS\n\n\ntutorial\n\n\n\n\n\n\n\n\n\n\n\nJul 2, 2024\n\n\nShan Jin\n\n\n\n\n\n\n  \n\n\n\n\n搭建v2ray节点的步骤与心得\n\n\n\n\n\n\n\nVPS\n\n\ncode\n\n\ntutorial\n\n\n\n\n\n\n\n\n\n\n\nFeb 14, 2023\n\n\nShan Jin\n\n\n\n\n\n\n  \n\n\n\n\nWelcome To My Blog\n\n\n\n\n\n\n\nnews\n\n\n\n\n\n\n\n\n\n\n\nFeb 14, 2023\n\n\nShan Jin\n\n\n\n\n\n\n  \n\n\n\n\n如何在超算上跑 jupyter notebook\n\n\n\n\n\n\n\ntutorial\n\n\nsuper-computer\n\n\n\n\n\n\n\n\n\n\n\nNov 24, 2021\n\n\nShan Jin\n\n\n\n\n\n\n  \n\n\n\n\n氢气球历险记\n\n\n\n\n\n\n\nstories\n\n\n\n\n\n\n\n\n\n\n\nAug 22, 2017\n\n\nShan Jin\n\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
+    "section": "",
+    "text": "Welcome to my personal blog! Here, I aim to provide useful tips and tricks for programming and Computer Science, as well as share some of my own experiences and stories along the way. Whether you’re looking for useful skills or just come across this place, I hope you’ll find something of interest here."
   }
 ]

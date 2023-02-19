@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/mayavi-installation-macos/mayavi-installation.html",
       "/posts/v2ray-notes/index.html",
       "/posts/welcome/index.html",
       "/posts/jnb-remote-server/index.html",
