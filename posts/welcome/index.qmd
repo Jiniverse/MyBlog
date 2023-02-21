@@ -6,7 +6,7 @@ categories: [news]
 ---
 
 
-Hi, there! This is the first post in a Quarto blog. Here, I'll be sharing my tips and tricks for programming and Computer Science.
+Hi, there! This is the first post in a Quarto blog. Here, I'll be sharing my stories and recording some notes during my learning process.
 
 ![](thumbnail.jpg)
 
