@@ -4,7 +4,7 @@
     "href": "posts/v2ray-notes/index.html",
     "title": "搭建v2ray节点的步骤与心得",
     "section": "",
-    "text": "最近参照网上的一些文章，主要是一灯大师写的这篇教程，搭建了v2ray节点。这里我根据自己的实际经历，记录了搭建过程中的一些心得，并且补充说明了如何解决GS的403错误。"
+    "text": "最近参照网上的一些文章，主要是一灯大师写的这篇教程，搭建了v2ray节点。这里我根据自己的实际经历，记录了搭建过程中的一些心得，并且补充说明了如何解决 Google Scholar 的403错误。"
   },
   {
     "objectID": "posts/v2ray-notes/index.html#购买vps",
